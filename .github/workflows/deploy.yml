@@ -9,18 +9,15 @@ on:
   push:
     branches: [ main ]
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-  actions: write
-
 jobs:
   download_and_process:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read  # Permite acceder a información de otras acciones
+      packages: read  # Requerido para descargar paquetes
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -46,42 +43,19 @@ jobs:
           mkdir -p downloads
           spotdl ${{ github.event.inputs.spotify_url }} --output downloads
 
-      - name: Create artifact
+      - name: Upload Downloaded Files
         if: github.event_name == 'workflow_dispatch'
-        run: |
-          cd downloads
-          zip -r ../spotify-downloads.zip ./*
-          cd ..
-
-      - name: Upload artifact
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Versión actualizada para evitar errores
         with:
           name: spotify-downloads
-          path: spotify-downloads.zip
+          path: downloads/
           retention-days: 1
-          if-no-files-found: error
 
-  deploy:
-    if: github.event_name == 'push'
-    needs: download_and_process
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: '.'
-      
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          exclude_assets: '**.yml,**/.git*'
