@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Music Downloader Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        #urlInput {
+            width: 70%;
+            padding: 8px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        #status {
+            margin-top: 20px;
+        }
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .instructions code {
+            background-color: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .instructions pre {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Spotify Music Downloader Guide</h1>
+    <p>Enter a Spotify URL to get download instructions using spotDL</p>
+    
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="Enter Spotify URL (song or playlist)">
+        <button onclick="showInstructions()">Get Instructions</button>
+    </div>
+    
+    <div id="status">
+        <div class="instructions">
+            <h3>About this tool:</h3>
+            <p>This guide helps you download music from Spotify using spotDL. Simply paste a Spotify URL above and follow the instructions that will appear.</p>
+            <p>You can download:</p>
+            <ul>
+                <li>Individual songs</li>
+                <li>Entire playlists</li>
+                <li>Albums</li>
+                <li>Artist's top tracks</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
