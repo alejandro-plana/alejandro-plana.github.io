@@ -9,15 +9,18 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  actions: write
+
 jobs:
   download_and_process:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      actions: read  # Permite acceder a información de otras acciones
-      packages: read  # Requerido para descargar paquetes
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -43,19 +46,45 @@ jobs:
           mkdir -p downloads
           spotdl ${{ github.event.inputs.spotify_url }} --output downloads
 
-      - name: Upload Downloaded Files
+      - name: Create artifact
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4  # Versión actualizada para evitar errores
+        run: |
+          cd downloads
+          zip -r ../spotify-downloads.zip ./*
+          cd ..
+
+      - name: Upload artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v3
         with:
           name: spotify-downloads
-          path: downloads/
+          path: spotify-downloads.zip
           retention-days: 1
+          if-no-files-found: error
 
-      - name: Deploy to GitHub Pages
-        if: github.event_name == 'push'
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Build and Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          publish_branch: gh-pages
+          publish_branch: gh-pages 
+          force_orphan: true
           exclude_assets: '**.yml,**/.git*'
+          commit_message: 'Deploy to GitHub Pages'
+          enable_jekyll: false
