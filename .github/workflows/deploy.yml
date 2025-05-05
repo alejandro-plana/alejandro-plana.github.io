@@ -14,10 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      actions: read  # Permite acceder a información de otras acciones
-      packages: read  # Requerido para descargar paquetes
+      actions: read
+      packages: read
+      pages: write  # Permisos adicionales para GitHub Pages (requerido para acciones nativas) [[3]]
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -45,17 +48,24 @@ jobs:
 
       - name: Upload Downloaded Files
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4  # Versión actualizada para evitar errores
+        uses: actions/upload-artifact@v4
         with:
           name: spotify-downloads
           path: downloads/
           retention-days: 1
 
+      - name: Create gh-pages branch if missing
+        run: |
+          git checkout --orphan gh-pages
+          git reset
+          echo "Initial commit" > index.html
+          git add index.html
+          git commit -m "Initial gh-pages commit"
+          git push origin gh-pages
+
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: actions/deploy-pages@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          publish_branch: gh-pages
-          exclude_assets: '**.yml,**/.git*'
+          publish_dir: ./dist  # Asegúrate de que este directorio tenga los archivos estáticos (ejemplo: index.html) [[4]]
