@@ -149,3 +149,4 @@ Este proyecto:
 - FFmpeg por el procesamiento de audio
 - GitHub por la infraestructura
 - Todos los contribuidores
+- asd
