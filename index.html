@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Music Downloader Guide</title>
+    <title>Spotify Music Downloader - GitHub Actions</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,75 +11,143 @@
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .container {
+            background-color: #282828;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .input-group {
             margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         #urlInput {
-            width: 70%;
-            padding: 8px;
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            background-color: #181818;
+            color: #ffffff;
         }
         button {
-            padding: 8px 15px;
+            padding: 12px 24px;
             background-color: #1DB954;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1ed760;
         }
         button:disabled {
-            background-color: #ccc;
+            background-color: #404040;
+            cursor: not-allowed;
+        }
+        .setup-button {
+            background-color: #2ea043;
+            margin-bottom: 1rem;
         }
         #status {
             margin-top: 20px;
         }
-        .instructions {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .instructions code {
-            background-color: #e9ecef;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .instructions pre {
-            background-color: #e9ecef;
+        .download-status {
             padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
+            background-color: #181818;
+            border-radius: 4px;
+            margin-top: 10px;
         }
-        .note {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
+        .success {
+            color: #1DB954;
+            padding: 15px;
+            background-color: #181818;
+            border-radius: 4px;
+            margin-top: 10px;
         }
         .error {
-            color: red;
+            color: #ff5555;
+            padding: 15px;
+            background-color: #181818;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .progress-container {
+            margin-top: 20px;
+            background-color: #404040;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 10px;
+            background-color: #1DB954;
+            transition: width 0.3s ease;
+        }
+        .action-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #1DB954;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #1DB954;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .action-link:hover {
+            background-color: #1DB954;
+            color: #ffffff;
+        }
+        .instructions {
+            background-color: #181818;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        code {
+            background-color: #282828;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
-    <h1>Spotify Music Downloader Guide</h1>
-    <p>Enter a Spotify URL to get download instructions using spotDL</p>
-    
-    <div class="input-group">
-        <input type="text" id="urlInput" placeholder="Enter Spotify URL (song or playlist)">
-        <button onclick="showInstructions()">Get Instructions</button>
-    </div>
-    
-    <div id="status">
-        <div class="instructions">
-            <h3>About this tool:</h3>
-            <p>This guide helps you download music from Spotify using spotDL. Simply paste a Spotify URL above and follow the instructions that will appear.</p>
-            <p>You can download:</p>
-            <ul>
-                <li>Individual songs</li>
-                <li>Entire playlists</li>
-                <li>Albums</li>
-                <li>Artist's top tracks</li>
-            </ul>
+    <div class="container">
+        <h1>🎵 Spotify Music Downloader</h1>
+        <p>Descarga música desde Spotify usando GitHub Actions</p>
+        
+        <div class="input-group">
+            <input type="text" 
+                   id="urlInput" 
+                   placeholder="Pega aquí la URL de Spotify (canción, álbum o playlist)"
+                   aria-label="URL de Spotify">
+            <button onclick="startDownload()" id="downloadBtn">Descargar</button>
+        </div>
+        
+        <div id="status">
+            <div class="instructions">
+                <p>📝 Instrucciones:</p>
+                <ol>
+                    <li>Necesitas un token de GitHub con permisos de workflow. 
+                        <a href="https://github.com/settings/tokens/new" target="_blank" class="action-link">
+                            Crear token aquí
+                        </a>
+                    </li>
+                    <li>Configura tu token usando el botón "Configurar Token de GitHub"</li>
+                    <li>Pega una URL de Spotify (canción, álbum o playlist)</li>
+                    <li>Haz clic en "Descargar" y espera a que el proceso termine</li>
+                    <li>Descarga tus archivos desde la pestaña Actions del repositorio</li>
+                </ol>
+                <p><strong>Nota:</strong> Los archivos se procesan usando GitHub Actions y estarán disponibles por 24 horas.</p>
+            </div>
         </div>
     </div>
 

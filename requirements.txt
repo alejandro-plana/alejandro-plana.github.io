@@ -1,2 +1,6 @@
 spotdl==4.1.1
+flask==2.0.1
+flask-cors==3.0.10
 ffmpeg-python==0.2.0
+Werkzeug==2.0.3
+requests==2.31.0
