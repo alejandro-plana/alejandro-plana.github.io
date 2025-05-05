@@ -16,7 +16,7 @@ jobs:
       contents: write
       actions: read
       packages: read
-      pages: write  # Permisos adicionales para GitHub Pages (requerido para acciones nativas) [[3]]
+      pages: write  # Permisos para GitHub Pages (acción nativa)
 
     steps:
       - name: Checkout code
@@ -56,6 +56,8 @@ jobs:
 
       - name: Create gh-pages branch if missing
         run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
           git checkout --orphan gh-pages
           git reset
           echo "Initial commit" > index.html
@@ -68,4 +70,4 @@ jobs:
         uses: actions/deploy-pages@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # Asegúrate de que este directorio tenga los archivos estáticos (ejemplo: index.html) [[4]]
+          publish_dir: ./dist
