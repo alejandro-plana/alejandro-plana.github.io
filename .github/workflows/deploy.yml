@@ -13,10 +13,8 @@ jobs:
   download_and_process:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      actions: read
-      packages: read
-      pages: write  # Permisos para GitHub Pages (acción nativa)
+      contents: read
+      id-token: write  # Permisos requeridos para deploy-pages (ver [[10]])
 
     steps:
       - name: Checkout code
@@ -54,20 +52,9 @@ jobs:
           path: downloads/
           retention-days: 1
 
-      - name: Create gh-pages branch if missing
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git checkout --orphan gh-pages
-          git reset
-          echo "Initial commit" > index.html
-          git add index.html
-          git commit -m "Initial gh-pages commit"
-          git push origin gh-pages
-
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push'
         uses: actions/deploy-pages@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: spotify-downloads  # Usa el artefacto subido (ver [[5]]
